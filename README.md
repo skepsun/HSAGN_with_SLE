@@ -1,6 +1,14 @@
 # HSAGN_with_SLE
 This is an implementation of simple combination of [SAGN+SLE](https://github.com/skepsun/SAGN_with_SLE) and [NARS](https://github.com/facebookresearch/NARS).
 
+## Requirements
+```
+ogb=1.3.1
+pytorch=1.8.1
+dgl=latest
+```
+For training transE embedding and preprocessing oag dataset, create a new conda environment with `dgl=0.4.3` and `dglke`.
+
 ## Methods
 We simply adapt relation-subsets sampling method from NARS.
 `hsagn` is a naive heterogeneous version of SAGN.
@@ -8,10 +16,30 @@ We simply adapt relation-subsets sampling method from NARS.
 `nars_sign` is exactly origin NARS.
 
 ## Preprocessing
-You can generate neccessary pretrained embeddings using scripts from [NARS](https://github.com/facebookresearch/NARS). Remember to change associated directory paths in arguments.
+You can generate all neccessary pretrained embeddings using scripts from [NARS](https://github.com/facebookresearch/NARS). 
+
+For example, suppose that we want to train models on MAG. 
+
+Firstly we train transE following instructions in NARS/graph_embed.  
+
+Then we can train our model with `main.py`.
+Randomly generating relations subsets is included in `main.py`. 
+
+
+By setting argument `fixed-subsets` we can directly use the example subsets from [NARS/sample_relation_subsets/examples](https://github.com/facebookresearch/NARS/tree/main/sample_relation_subsets).
+
+## Arguments
+These arguments should be modified:
+
+`root`: The root directory for ogb datasets.
+
+`embedding-path`: The directory of TransE embedding.
+
+`example-subsets-path`: The directory of example relations subsets (only used when `fixed-subsets` is True).
 
 ## Results
-We provide example scripts for experiments on ACM, MAG, OAG_venue and OAG_L1. For now, these experiments have not been fully conducted:
+We provide example scripts for experiments on ACM, MAG, OAG_venue and OAG_L1. For now, these experiments have not been fully conducted.
+To reproduce best results on MAG, run script `mag_sagn_use_labels_fixed.sh`.
 |Relation size|Model|Dataset|Test acc|Val acc|
 |----|----|----|----|----|
 |fixed 8|NARS_SAGN+SLE-0|MAG|0.5232±0.0025|0.5412±0.0015|
@@ -47,15 +75,15 @@ We provide example scripts for experiments on ACM, MAG, OAG_venue and OAG_L1. Fo
 
 |Relation size|Model|Dataset|Test MRR|Val MRR|Test NDCG| Val NDCG|
 |----|----|----|----|----|----|----|
-|2|NARS_SIGN+SE-0|OAG_venue|0.3612±0.0052|0.4293±0.0046|0.5380±0.0047|0.6051±0.0039|
-|2|NARS_SIGN+SE-1|OAG_venue|0.3736±0.0053|0.4362±0.0040|0.5499±0.0046|0.6107±0.0034|
-|2|NARS_SIGN+SE-2|OAG_venue|0.3745±0.0050|0.4358±0.0041|0.5498±0.0042|0.6093±0.0032|
-|2|NARS_SAGN+SE-0|OAG_venue|-|-|-|-|
-|2|NARS_SAGN+SE-1|OAG_venue|-|-|-|-|
-|2|NARS_SAGN+SE-2|OAG_venue|-|-|-|-|
-|2|NARS_SIGN+SLE-0|OAG_venue|-|-|-|-|
-|2|NARS_SIGN+SLE-1|OAG_venue|-|-|-|-|
-|2|NARS_SIGN+SLE-2|OAG_venue|-|-|-|-|
-|2|NARS_SAGN+SLE-0|OAG_venue|-|-|-|-|
-|2|NARS_SAGN+SLE-1|OAG_venue|-|-|-|-|
-|2|NARS_SAGN+SLE-2|OAG_venue|-|-|-|-|
+|8|NARS_SIGN+SE-0|OAG_venue|0.3612±0.0052|0.4293±0.0046|0.5380±0.0047|0.6051±0.0039|
+|8|NARS_SIGN+SE-1|OAG_venue|0.3736±0.0053|0.4362±0.0040|0.5499±0.0046|0.6107±0.0034|
+|8|NARS_SIGN+SE-2|OAG_venue|0.3745±0.0050|0.4358±0.0041|0.5498±0.0042|0.6093±0.0032|
+|8|NARS_SAGN+SE-0|OAG_venue|-|-|-|-|
+|8|NARS_SAGN+SE-1|OAG_venue|-|-|-|-|
+|8|NARS_SAGN+SE-2|OAG_venue|-|-|-|-|
+|8|NARS_SIGN+SLE-0|OAG_venue|-|-|-|-|
+|8|NARS_SIGN+SLE-1|OAG_venue|-|-|-|-|
+|8|NARS_SIGN+SLE-2|OAG_venue|-|-|-|-|
+|8|NARS_SAGN+SLE-0|OAG_venue|-|-|-|-|
+|8|NARS_SAGN+SLE-1|OAG_venue|-|-|-|-|
+|8|NARS_SAGN+SLE-2|OAG_venue|-|-|-|-|

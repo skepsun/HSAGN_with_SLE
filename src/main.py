@@ -104,8 +104,8 @@ def run(args, data, subset_list, device, stage=0):
             val_loss.append(acc[-2])
             log = "Epoch {}, Time(s): {:.4f} {:.4f}, ".format(epoch, med - start, acc[-1])
             if args.dataset.startswith("oag"):
-                log += "Best Val loss: {:.4f}\n"
-                log += "NDCG: Train: {:.4f}, Val: {:.4f}, Test: {:.4f}, Best Val: {:.4f}, Best Test: {:.4f}\n".format(best_val_loss, acc[0][0], acc[1][0], acc[2][0], best_val[0], best_test[0])
+                log += "Best Val loss: {:.4f}\n".format(best_val_loss)
+                log += "NDCG: Train: {:.4f}, Val: {:.4f}, Test: {:.4f}, Best Val: {:.4f}, Best Test: {:.4f}\n".format(acc[0][0], acc[1][0], acc[2][0], best_val[0], best_test[0])
                 log += " MRR: Train: {:.4f}, Val: {:.4f}, Test: {:.4f}, Best Val: {:.4f}, Best Test: {:.4f}".format(acc[0][1], acc[1][1], acc[2][1], best_val[1], best_test[1])
             else:
                 log += "Best Val loss: {:.4f}, Accs: Train: {:.4f}, Val: {:.4f}, Test: {:.4f}, Best Val: {:.4f}, Best Test: {:.4f}".format(best_val_loss, acc[0][0], acc[1][0], acc[2][0], best_val[0], best_test[0])
