@@ -12,5 +12,6 @@ We provide example scripts for experiments on ACM, MAG, OAG_venue and OAG_L1. Fo
 We can offer a fast MAG result with using example subsets from NARS:
 |Model|Dataset|Metrics|
 |----|----|----|
-|NARS_SAGN+SLE(2)|MAG|0.5440±0.0015|
+|NARS_SAGN+SLE-2|MAG|0.5440±0.0015|
+
 To reproduce this result, run script `mag_sagn_use_labels_fixed.sh`.
