@@ -26,7 +26,7 @@ python -u ../src/main.py \
     --model nars_sagn \
     --multihop-layers 2 \
     --mlp-layer 2 \
-    --label-K 3 \
+    --label-K 1 \
     --relu prelu \
     --no-batch-norm \
     --use-labels
