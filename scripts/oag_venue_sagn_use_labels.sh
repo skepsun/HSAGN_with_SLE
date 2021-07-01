@@ -27,6 +27,6 @@ python -u ../src/main.py \
     --multihop-layers 2 \
     --mlp-layer 2 \
     --label-K 1 \
-    --relu prelu \
-    --no-batch-norm \
     --use-labels
+    # --relu prelu \
+    # --no-batch-norm \
