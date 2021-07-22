@@ -13,7 +13,7 @@ import torch.nn.functional as F
 from sklearn.decomposition import PCA
 
 from dataset import load_dataset
-# from utils import compute_spectral_emb, entropy
+from utils import entropy
 
 def gen_rel_subset_feature(g, rel_subset, args, device):
     """
@@ -211,13 +211,27 @@ def prepare_data(device, args, probs_path, subset_list, stage=0):
         tr_va_te_nid = torch.cat([train_nid, val_nid, test_nid], dim=0)
 
         # assert len(teacher_probs) == len(feat)
-        confident_nid_inner = torch.arange(len(teacher_probs))[teacher_probs.max(1)[0] > args.threshold]
+        if args.dataset in ['oag_L1']:
+            threshold = - args.threshold * np.log(args.threshold) - (1-args.threshold) * np.log(1-args.threshold)
+            entropy_distribution = entropy(teacher_probs)
+            print(threshold)
+            print(entropy_distribution.mean(1).max().item())
+            
+            confident_nid_inner = torch.arange(len(teacher_probs))[(entropy_distribution.mean(1) <= threshold)]
+        else:
+            confident_nid_inner = torch.arange(len(teacher_probs))[teacher_probs.max(1)[0] > args.threshold]
         extra_confident_nid_inner = confident_nid_inner[confident_nid_inner >= len(train_nid)]
         confident_nid = tr_va_te_nid[confident_nid_inner]
         extra_confident_nid = tr_va_te_nid[extra_confident_nid_inner]
         print(f"pseudo label number: {len(confident_nid)}")
-        pseudo_labels = torch.argmax(teacher_probs, dim=1).to(labels.device)
-        labels_with_pseudos = torch.zeros_like(labels)
+        if args.dataset in ['oag_L1']:
+            pseudo_labels = teacher_probs
+            pseudo_labels[pseudo_labels >= 0.5] = 1
+            pseudo_labels[pseudo_labels < 0.5] = 0
+            labels_with_pseudos = torch.ones_like(labels)
+        else:
+            pseudo_labels = torch.argmax(teacher_probs, dim=1).to(labels.device)
+            labels_with_pseudos = torch.zeros_like(labels)
         train_nid_with_pseudos = np.union1d(train_nid, confident_nid)
         print(f"enhanced train set number: {len(train_nid_with_pseudos)}")
         labels_with_pseudos[train_nid] = labels[train_nid]
@@ -233,10 +247,14 @@ def prepare_data(device, args, probs_path, subset_list, stage=0):
     
     if args.use_labels:
         print("using label information")
-        
-        label_emb = torch.zeros([feat.shape[0], n_classes]).to(labels.device)
-        # label_emb = (1. / n_classes) * torch.ones([feat.shape[0], n_classes]).to(device)
-        label_emb[train_nid_with_pseudos] = F.one_hot(labels_with_pseudos[train_nid_with_pseudos], num_classes=n_classes).float().to(labels.device)
+        if args.dataset in ['oag_L1']:
+            label_emb = 0.5 * torch.ones([feat.shape[0], n_classes]).to(labels.device)
+            # label_emb = labels_with_pseudos.mean(0).repeat([feat.shape[0], 1])
+            label_emb[train_nid_with_pseudos] = labels_with_pseudos.float()[train_nid_with_pseudos]
+        else:
+            label_emb = torch.zeros([feat.shape[0], n_classes]).to(labels.device)
+            # label_emb = (1. / n_classes) * torch.ones([feat.shape[0], n_classes]).to(device)
+            label_emb[train_nid_with_pseudos] = F.one_hot(labels_with_pseudos[train_nid_with_pseudos], num_classes=n_classes).float().to(labels.device)
 
 
         # if args.dataset == "ogbn-mag":

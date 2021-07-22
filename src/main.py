@@ -131,7 +131,10 @@ def run(args, data, subset_list, device, stage=0):
             else:
                 batch_label_emb = None
             out, a = best_model(batch_feats, batch_label_emb)
-            out = out.softmax(dim=1)
+            if args.dataset in ['oag_L1']:
+                out = out.sigmoid()
+            else:
+                out = out.softmax(dim=1)
             # remember to transfer output probabilities to cpu
             probs.append(out.cpu())
             if "sagn" in args.model and (not args.avoid_features):

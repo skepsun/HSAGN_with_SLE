@@ -30,4 +30,4 @@ python -u ../src/main.py \
     --label-K 1 \
     --relu prelu \
     --no-batch-norm \
-    # --use-labels
+    --use-labels

@@ -23,11 +23,9 @@ python -u ../src/main.py \
     --attn-drop 0. \
     --input-drop 0. \
     --sample-size 8 \
-    --threshold 0.2 \
-    --model nars_sagn \
+    --threshold 0.9 \
+    --model nars_sign \
     --multihop-layers 2 \
     --mlp-layer 2 \
-    --label-K 1 \
-    --relu prelu \
-    --no-batch-norm \
-    # --use-labels
+    --label-K 9 \
+    --use-labels
